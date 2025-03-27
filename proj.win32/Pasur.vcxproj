@@ -834,18 +834,18 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   <ItemGroup>
     <ClInclude Include="..\Classes\AppDelegate.h" />
     <ClInclude Include="..\Classes\Card.h" />
+    <ClInclude Include="..\Classes\Game.h" />
     <ClInclude Include="..\Classes\GameManager.h" />
     <ClInclude Include="..\Classes\GameScene.h" />
     <ClInclude Include="..\Classes\GameState.h" />
-    <ClInclude Include="..\Classes\HelloWorldScene.h" />
     <ClInclude Include="..\Classes\MenuScene.h" />
     <ClInclude Include="C:\DEV\Pasur\proj.win32\main.h" />
     <ClInclude Include="C:\DEV\Pasur\proj.win32\resource.h" />
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
     <ClCompile Include="..\Classes\Card.cpp" />
+    <ClCompile Include="..\Classes\Game.cpp" />
     <ClCompile Include="..\Classes\GameManager.cpp" />
     <ClCompile Include="..\Classes\GameScene.cpp" />
-    <ClCompile Include="..\Classes\HelloWorldScene.cpp" />
     <ClCompile Include="..\Classes\MenuScene.cpp" />
     <ClCompile Include="C:\DEV\Pasur\proj.win32\main.cpp" />
     <ResourceCompile Include="C:\DEV\Pasur\proj.win32\game.rc" />

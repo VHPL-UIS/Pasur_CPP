@@ -1,7 +1,9 @@
 #include "GameScene.h"
 #include "Card.h"
+#include "ui/CocosGUI.h"
 
 USING_NS_CC;
+using namespace cocos2d::ui;
 
 Scene* GameScene::createScene()
 {
@@ -33,80 +35,42 @@ bool GameScene::init()
 		this->addChild(backgroundSprite, -1);
 	}
 
-	initDeck();
-	shuffleDeck();
-	dealCards();
+	game = std::make_unique<Game>();
+	if (!game)
+	{
+		problemLoading("Game");
+		return false;
+	}
 
-	showCards(playerHand, visibleSize.height / 4);
-	showCards(cpuHand, visibleSize.height / 4 * 3.7, false);
-	showCards(tableCards, visibleSize.height / 2 * 1.2);
+	game->start();
+
+	showCards(game->getPlayerHand(), visibleSize.height / 4);
+	showCards(game->getCpuHand(), visibleSize.height / 4 * 3.7, false);
+	showCards(game->getTableCards(), visibleSize.height / 2 * 1.2);
 
 	return true;
 }
 
-void GameScene::initDeck()
-{
-	deck.clear();
-
-	for (int suit = static_cast<int>(Suit::Hearts); suit <= static_cast<int>(Suit::Spades); ++suit)
-	{
-		for (int value = 2; value <= 14; ++value)
-		{
-			deck.push_back(Card(value, static_cast<Suit>(suit)));
-		}
-	}
-}
-
-void GameScene::shuffleDeck()
-{
-	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-	std::shuffle(deck.begin(), deck.end(), std::default_random_engine(seed));
-}
-
-void GameScene::dealCards()
-{
-	playerHand.clear();
-	cpuHand.clear();
-	tableCards.clear();
-
-	for (int i = 0; i < 4; ++i)
-	{
-		playerHand.push_back(deck.back());
-		deck.pop_back();
-		cpuHand.push_back(deck.back());
-		deck.pop_back();
-	}
-
-	for (int i = 0; i < 4; ++i)
-	{
-		Card card = deck.back();
-		deck.pop_back();
-
-		while (card.isJack())
-		{
-			deck.insert(deck.begin(), card);
-			card = deck.back();
-			deck.pop_back();
-		}
-		tableCards.push_back(card);
-	}
-}
-
 void GameScene::showCard(const Card& card, const Vec2& position, bool showCardFace)
 {
-	auto cardSprite = Sprite::create(card.getImagePath(showCardFace));
-	if (cardSprite == nullptr)
+	auto cardButton = Button::create(card.getImagePath(showCardFace), card.getImagePath(showCardFace));
+	if (cardButton == nullptr)
 	{
 		problemLoading(card.getImagePath().c_str());
 		return;
 	}
 	else
 	{
-		cardSprite->setPosition(position);
-		cardSprite->setScale(0.25f);
-		printf("%f %f\n", cardSprite->getContentSize().width, cardSprite->getContentSize().height);
-		this->addChild(cardSprite, 0);
+		cardButton->setPosition(position);
+		cardButton->setScale(0.25f);
+		this->addChild(cardButton, 0);
 	}
+
+	cardButton->addClickEventListener([=](Ref* sender)
+	{
+		CCLOG("Card clicked: %s", card.toString().c_str());
+		printf("%s\n", card.toString().c_str());
+	});
 }
 
 void GameScene::showCards(const std::vector<Card>& cards, float yPosition, bool showCardFace)
@@ -131,9 +95,4 @@ void GameScene::showCards(const std::vector<Card>& cards, float yPosition, bool 
 		showCard(cards[i], Vec2(xPosition, yPosition), showCardFace);
 		xPosition += cardWidth + spacing;
 	}
-}
-
-void GameScene::endGame()
-{
-	//GameManager::getInstance().changeState(std::make_unique<GameStateMenu>());
 }

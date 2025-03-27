@@ -2,8 +2,8 @@
 #define __GAMESCENE_H__
 
 #include "cocos2d.h"
-#include "Card.h"
-#include <vector>
+#include "Game.h"
+#include <memory>
 
 class GameScene : public cocos2d::Scene
 {
@@ -13,18 +13,10 @@ public:
 	CREATE_FUNC(GameScene);
 
 private:
-	std::vector<Card> deck;
-	std::vector<Card> playerHand;
-	std::vector<Card> cpuHand;
-	std::vector<Card> tableCards;
-
-	void initDeck();
-	void shuffleDeck();
-	void dealCards();
+	std::unique_ptr<Game> game;
 
 	void showCard(const Card& card, const cocos2d::Vec2& position, bool showCardFace = true);
 	void showCards(const std::vector<Card>& cards, float yPosition, bool showCardFace = true);
-	void endGame();
 };
 
 #endif // __GAMESCENE_H__
