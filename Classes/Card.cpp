@@ -62,7 +62,11 @@ bool Card::isJack() const
 	return value == 11;
 }
 
-std::string Card::getImagePath() const
+std::string Card::getImagePath(bool showCardFace) const
 {
-	return "cards/" + toString() + ".png";
+	if (!showCardFace)
+	{
+		return "back.png";
+	}
+	return toString() + ".png";
 }

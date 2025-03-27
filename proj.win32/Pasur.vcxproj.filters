@@ -19,6 +19,9 @@
     <ClCompile Include="..\Classes\MenuScene.cpp">
       <Filter>Source Files\Classes</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\GameScene.cpp">
+      <Filter>Source Files\Classes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\DEV\Pasur\proj.win32\main.h">
@@ -61,6 +64,9 @@
       <Filter>Source Files\Classes</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\MenuScene.h">
+      <Filter>Source Files\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameScene.h">
       <Filter>Source Files\Classes</Filter>
     </ClInclude>
   </ItemGroup>

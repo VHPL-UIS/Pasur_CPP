@@ -19,7 +19,7 @@ public:
 	int getValue() const;
 	Suit getSuit() const;
 	bool isJack() const;
-	std::string getImagePath() const;
+	std::string getImagePath(bool showCardFace = true) const;
 
 private:
 	int value;

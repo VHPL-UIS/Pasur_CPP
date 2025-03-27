@@ -76,11 +76,14 @@ bool AppDelegate::applicationDidFinishLaunching() {
 #else
         glview = GLViewImpl::create("Pasur");
 #endif
+        glview->setFrameSize(1366, 768);
         director->setOpenGLView(glview);
     }
 
+#ifdef COCOS2D_DEBUG
     // turn on display FPS
     director->setDisplayStats(true);
+#endif
 
     // set FPS. the default value is 1.0/60 if you don't call this
     director->setAnimationInterval(1.0f / 60);
@@ -103,6 +106,14 @@ bool AppDelegate::applicationDidFinishLaunching() {
     {        
         director->setContentScaleFactor(MIN(smallResolutionSize.height/designResolutionSize.height, smallResolutionSize.width/designResolutionSize.width));
     }
+
+    std::vector<std::string> searchPaths;
+	searchPaths.push_back(FileUtils::getInstance()->getWritablePath() + "/cached_download");
+	searchPaths.push_back("fonts");
+	searchPaths.push_back("cards");
+	searchPaths.push_back("buttons");
+	searchPaths.push_back("backgrounds");
+    FileUtils::getInstance()->setSearchPaths(searchPaths);
 
     register_all_packages();
 
