@@ -42,38 +42,54 @@ bool GameScene::init()
 		return false;
 	}
 
+	game->onCardPlayed = [this](const Card& card, bool isPlayer)
+	{
+		renderCards();
+	};
+
 	game->start();
 
-	showCards(game->getPlayerHand(), visibleSize.height / 4);
-	showCards(game->getCpuHand(), visibleSize.height / 4 * 3.7, false);
-	showCards(game->getTableCards(), visibleSize.height / 2 * 1.2);
+	renderCards();
 
 	return true;
 }
 
-void GameScene::showCard(const Card& card, const Vec2& position, bool showCardFace)
+void GameScene::renderCards()
 {
-	auto cardButton = Button::create(card.getImagePath(showCardFace), card.getImagePath(showCardFace));
-	if (cardButton == nullptr)
+	for (auto* card : playerHandCards)
 	{
-		problemLoading(card.getImagePath().c_str());
-		return;
+		if (card != nullptr)
+		{
+			card->removeFromParent();
+		}
 	}
-	else
-	{
-		cardButton->setPosition(position);
-		cardButton->setScale(0.25f);
-		this->addChild(cardButton, 0);
-	}
+	playerHandCards.clear();
 
-	cardButton->addClickEventListener([=](Ref* sender)
+	for (auto* card : cpuHandCards)
 	{
-		CCLOG("Card clicked: %s", card.toString().c_str());
-		printf("%s\n", card.toString().c_str());
-	});
+		if (card != nullptr)
+		{
+			card->removeFromParent();
+		}
+	}
+	cpuHandCards.clear();
+
+	for (auto* card : tableCards)
+	{
+		if (card != nullptr)
+		{
+			card->removeFromParent();
+		}
+	}
+	tableCards.clear();
+
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	showCards(game->getPlayerHand(), visibleSize.height / 4);
+	showCards(game->getCpuHand(), visibleSize.height / 4 * 3.7, false, false);
+	showCards(game->getTableCards(), visibleSize.height / 2 * 1.2, true, false);
 }
 
-void GameScene::showCards(const std::vector<Card>& cards, float yPosition, bool showCardFace)
+void GameScene::showCards(const std::vector<Card>& cards, float yPosition, bool showCardFace, bool isPlayerHand)
 {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	const float spacing = 10.0f;
@@ -92,7 +108,41 @@ void GameScene::showCards(const std::vector<Card>& cards, float yPosition, bool 
 	float xPosition = (visibleSize.width - totalWidth) / 2 + cardWidth / 2;
 	for (int i = 0; i < numCards; ++i)
 	{
-		showCard(cards[i], Vec2(xPosition, yPosition), showCardFace);
+		Vec2 position = Vec2(xPosition, yPosition);
+		auto cardButton = Button::create(cards[i].getImagePath(showCardFace), cards[i].getImagePath(showCardFace));
+		if (cardButton == nullptr)
+		{
+			problemLoading(cards[i].getImagePath().c_str());
+			return;
+		}
+		else
+		{
+			cardButton->setPosition(position);
+			cardButton->setScale(0.25f);
+			this->addChild(cardButton, 0);
+			if (!showCardFace)
+			{
+				cpuHandCards.push_back(cardButton);
+			}
+			else
+			{
+				if (isPlayerHand)
+				{
+					playerHandCards.push_back(cardButton);
+				}
+				else
+				{
+					tableCards.push_back(cardButton);
+				}
+			}
+		}
+
+		cardButton->addClickEventListener([=](Ref* sender)
+		{
+			game->playerPlay(i);
+			CCLOG("Card clicked: %s", cards[i].toString().c_str());
+			printf("%s\n", cards[i].toString().c_str());
+		});
 		xPosition += cardWidth + spacing;
 	}
 }

@@ -3,6 +3,7 @@
 
 #include "cocos2d.h"
 #include "Game.h"
+#include "ui/CocosGUI.h"
 #include <memory>
 
 class GameScene : public cocos2d::Scene
@@ -15,8 +16,13 @@ public:
 private:
 	std::unique_ptr<Game> game;
 
-	void showCard(const Card& card, const cocos2d::Vec2& position, bool showCardFace = true);
-	void showCards(const std::vector<Card>& cards, float yPosition, bool showCardFace = true);
+	void showCards(const std::vector<Card>& cards, float yPosition, bool showCardFace = true, bool isPlayerHand = true);
+	
+	void renderCards();
+
+	std::vector<cocos2d::ui::Button*> playerHandCards;
+	std::vector<cocos2d::ui::Button*> cpuHandCards;
+	std::vector<cocos2d::ui::Button*> tableCards;
 };
 
 #endif // __GAMESCENE_H__
