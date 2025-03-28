@@ -46,6 +46,19 @@ bool MenuScene::init()
 	menu->setPosition(Vec2::ZERO);
 	this->addChild(menu, 1);
 
+	auto gameTitle = Label::createWithTTF("Pasur", "fonts/Marker Felt.ttf", 24);
+	gameTitle->setTextColor(Color4B::WHITE);
+	if (gameTitle == nullptr)
+	{
+		problemLoading("'fonts/Marker Felt.ttf'");
+	}
+	else
+	{
+		gameTitle->setPosition(Vec2(origin.x + visibleSize.width / 2,
+			origin.y + visibleSize.height - gameTitle->getContentSize().height));
+		this->addChild(gameTitle, 1);
+	}
+
 	/*auto sprite = Sprite::create("HelloWorld.png");
 	if (sprite == nullptr)
 	{
