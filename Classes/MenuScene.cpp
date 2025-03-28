@@ -38,7 +38,7 @@ bool MenuScene::init()
 	else
 	{
 		float x = origin.x + visibleSize.width / 2;
-		float y = origin.y + visibleSize.height / 2;
+		float y = origin.y + menu1vsCpuItem->getContentSize().height;
 		menu1vsCpuItem->setPosition(Vec2(x, y));
 	}
 
@@ -59,17 +59,18 @@ bool MenuScene::init()
 		this->addChild(gameTitle, 1);
 	}
 
-	/*auto sprite = Sprite::create("HelloWorld.png");
+	auto sprite = Sprite::create("ace_of_clubs.png");
 	if (sprite == nullptr)
 	{
-		problemLoading("'HelloWorld.png'");
+		problemLoading("'ace_of_clubs.png'");
 	}
 	else
 	{
 		sprite->setPosition(Vec2(visibleSize.width / 2 + origin.x,
 			visibleSize.height / 2 + origin.y));
 		this->addChild(sprite, 0);
-	}*/
+		sprite->setScale(0.3);
+	}
 
 	return true;
 }
