@@ -41,6 +41,7 @@ private:
 	void shuffleDeck();
 	void dealCards();
 	void revealTableCards();
+	void findCombinationSum(const std::vector<Card>&, int, int, std::vector<Card>&, std::vector<std::vector<Card>>&);
 	//void checkEndRound();
 	//void checkEndGame();
 	//void calculateScore();

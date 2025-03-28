@@ -2,6 +2,9 @@
 #include <algorithm>
 #include <random>
 #include <chrono>
+#include "cocos2d.h"
+
+USING_NS_CC;
 
 Game::Game()
 {
@@ -73,12 +76,11 @@ void Game::playerPlay(int cardIndex)
 {
 	Card card = playerHand[cardIndex];
 	playerHand.erase(playerHand.begin() + cardIndex);
-	tableCards.push_back(card);
+	collectCards(card, true);
 	if (onCardPlayed)
 	{
 		onCardPlayed(card, true);
 	}
-	collectCards(card, true);
 	cpuPlay();
 }
 
@@ -107,9 +109,15 @@ void Game::collectCards(const Card& playedCard, bool isPlayer)
 	int value = playedCard.getValue();
 	if (value == 11)
 	{
+		if (tableCards.size() < 1)
+		{
+			tableCards.push_back(playedCard);
+			return;
+		}
+
 		for (auto it = tableCards.begin(); it != tableCards.end();)
 		{
-			if (it->getValue() != 12 || it->getValue() != 13)
+			if (it->getValue() != 12 && it->getValue() != 13)
 			{
 				collectedCards.push_back(*it);
 				it = tableCards.erase(it);
@@ -143,37 +151,55 @@ void Game::collectCards(const Card& playedCard, bool isPlayer)
 		{
 			value = 1;
 		}
-		int n = tableCards.size();
-		std::vector<int> bestIndices;
 
-		for (int mask = 1; mask < (1 << n); ++mask)
+		std::vector<Card> combination;
+		std::vector<std::vector<Card>> results;
+
+		findCombinationSum(tableCards, target, 0, combination, results);
+
+		if (results.empty())
 		{
-			int sum = 0;
-			std::vector<int> indices;
-			for (int i = 0; i < n; ++i)
+			CCLOG("No valid combinaiton found!");
+		}
+		else
+		{
+			CCLOG("valid combinations:\n");
+			for (auto& comb : results)
 			{
-				if (mask & (1 << i))
+				for (auto& card : comb)
 				{
-					sum += tableCards[i].getValue();
-					indices.push_back(i);
+					CCLOG("Card: %s", card.toString().c_str());
 				}
 			}
-			if (sum == target && indices.size() > bestIndices.size())
-			{
-				bestIndices = indices;
-			}
-		}
 
-		for (int i = bestIndices.size() - 1; i >= 0; --i)
-		{
-			int idx = bestIndices[i];
-			collectedCards.push_back(tableCards[idx]);
-			tableCards.erase(tableCards.begin() + idx);
+			if (results.size() > 1)
+			{
+				// a pop up to select the combination and add it to the collected cards
+			}
+			else
+			{
+				for (auto& card : results[0])
+				{
+					for (auto it = tableCards.begin(); it != tableCards.end(); )
+					{
+						if (card.getValue() == it->getValue())
+						{
+							collectedCards.push_back(*it);
+							it = tableCards.erase(it);
+						}
+						else
+						{
+							++it;
+						}
+					}
+				}
+			}
 		}
 	}
 
 	if (!collectedCards.empty())
 	{
+		collectedCards.push_back(playedCard);
 		if (isPlayer)
 		{
 			for (const Card& card : collectedCards)
@@ -194,9 +220,31 @@ void Game::collectCards(const Card& playedCard, bool isPlayer)
 			onScoreUpdated(playerScore, cpuScore);
 		}
 	}
-
-	if (collectedCards.empty())
+	else 
 	{
 		tableCards.push_back(playedCard);
+	}
+}
+
+void Game::findCombinationSum(const std::vector<Card>& tableCards, int target, int start, std::vector<Card>& combination, std::vector<std::vector<Card>>& results)
+{
+	if (target == 0)
+	{
+		results.push_back(combination);
+		return;
+	}
+	for (int i = start; i < tableCards.size(); ++i)
+	{
+		int cardValue = tableCards[i].getValue();
+		if (cardValue == 14)
+		{
+			cardValue = 1;
+		}
+		if (cardValue <= target)
+		{
+			combination.push_back(tableCards[i]);
+			findCombinationSum(tableCards, target - cardValue, i + 1, combination, results);
+			combination.pop_back();
+		}
 	}
 }

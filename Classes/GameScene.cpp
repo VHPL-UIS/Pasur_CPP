@@ -96,7 +96,6 @@ void GameScene::showCards(const std::vector<Card>& cards, float yPosition, bool 
 	const int numCards = cards.size();
 
 	auto sampleSprite = Sprite::create(cards[0].getImagePath());
-	printf("%f %f\n", sampleSprite->getContentSize().width, sampleSprite->getContentSize().height);
 	if (!sampleSprite)
 	{
 		problemLoading(cards[0].getImagePath().c_str());
@@ -141,7 +140,6 @@ void GameScene::showCards(const std::vector<Card>& cards, float yPosition, bool 
 		{
 			game->playerPlay(i);
 			CCLOG("Card clicked: %s", cards[i].toString().c_str());
-			printf("%s\n", cards[i].toString().c_str());
 		});
 		xPosition += cardWidth + spacing;
 	}
