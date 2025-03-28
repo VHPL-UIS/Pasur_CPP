@@ -130,27 +130,52 @@ void Game::collectCards(const Card& playedCard, bool isPlayer)
 	}
 	else if (value == 12 || value == 13)
 	{
+		std::vector<Card> multipleCards;
 		for (auto it = tableCards.begin(); it != tableCards.end();)
 		{
 			if (it->getValue() == value)
 			{
-				collectedCards.push_back(*it);
-				it = tableCards.erase(it);
-				break;
+				multipleCards.push_back(*it);
 			}
 			else
 			{
 				++it;
 			}
 		}
+
+		if (!multipleCards.empty())
+		{
+			bool hasClubs = false;
+			for (auto it = multipleCards.begin(); it != multipleCards.end();)
+			{
+				if (it->getSuit() == Suit::Clubs)
+				{
+					collectedCards.push_back(*it);
+					it = tableCards.erase(it);
+					hasClubs = true;
+					break;
+				}
+				else
+				{
+					++it;
+				}
+			}
+			if (!hasClubs)
+			{
+				auto it = multipleCards.begin();
+				collectedCards.push_back(*it);
+				it = tableCards.erase(it);
+			}
+		}
 	}
 	else
 	{
-		int target = 11 - value;
 		if (value == 14)
 		{
 			value = 1;
 		}
+
+		int target = 11 - value;
 
 		std::vector<Card> combination;
 		std::vector<std::vector<Card>> results;
